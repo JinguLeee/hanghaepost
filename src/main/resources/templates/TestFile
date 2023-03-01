@@ -1,0 +1,41 @@
+Get
+http://localhost:8080/api/post		초기 화면
+
+
+
+Post
+http://localhost:8080/api/post		등록
+{
+	"password" : "1234",
+	"title" : "제목",
+	"username" : "진구리",
+	"contents": "아항"
+}
+
+
+
+Get
+http://localhost:8080/api/post		전체 조회
+
+
+
+Get
+http://localhost:8080/api/post/1		단건 조회
+
+
+
+Put
+http://localhost:8080/api/post/1		업데이트	//  비밀번호 다르면 저장 안되게
+{
+	"password" : "1235",
+	"title" : "바꾸자",
+	"contents": "됐나?"
+}
+
+
+
+Delete
+http://localhost:8080/api/post/1		삭제		//  비밀번호 다르면 삭제 안되게
+{
+	"password" : "1234"
+}
