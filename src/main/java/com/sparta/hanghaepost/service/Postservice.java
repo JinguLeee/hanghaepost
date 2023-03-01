@@ -6,7 +6,6 @@ import com.sparta.hanghaepost.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +24,7 @@ public class Postservice {
 
     @Transactional(readOnly = true)
     public List<Post> getPost() {
-        return postRepository.findAllByOrderByModifiedAtDesc();
+        return postRepository.findAllByOrderByCreatedAtDesc();
     }
 
     @Transactional
