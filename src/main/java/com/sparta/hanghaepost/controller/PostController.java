@@ -1,7 +1,8 @@
 package com.sparta.hanghaepost.controller;
 
 import com.sparta.hanghaepost.dto.PostRequestDto;
-import com.sparta.hanghaepost.entity.Post;
+import com.sparta.hanghaepost.dto.PostResponseDto;
+import com.sparta.hanghaepost.dto.ResultResponseDto;
 import com.sparta.hanghaepost.service.Postservice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,27 +21,27 @@ public class PostController {
     }
 
     @PostMapping("/api/post")
-    public Post createPost(@RequestBody PostRequestDto postRequestDto) {
+    public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto) {
         return postService.createPost(postRequestDto);
     }
 
     @GetMapping("/api/post")
-    public List<Post> getMemos() {
+    public List<PostResponseDto> getMemos() {
         return postService.getPost();
     }
 
     @GetMapping("/api/post/{id}")
-    public Post getDetail(@PathVariable Long id) {
-        return postService.getPostDetail(id);
+    public PostResponseDto getDetail(@PathVariable Long id) {
+        return postService.getOnePost(id);
     }
 
     @PutMapping("/api/post/{id}")
-    public Long updatePost (@PathVariable Long id, @RequestBody PostRequestDto postRequestDto) {
+    public PostResponseDto updatePost (@PathVariable Long id, @RequestBody PostRequestDto postRequestDto) {
         return postService.update(id, postRequestDto);
     }
 
     @DeleteMapping("/api/post/{id}")
-    public Long deleteMemo(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto) {
+    public ResultResponseDto deleteMemo(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto) {
         return postService.deleteMemo(id, postRequestDto);
     }
 }

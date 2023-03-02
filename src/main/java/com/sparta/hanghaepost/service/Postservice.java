@@ -1,12 +1,15 @@
 package com.sparta.hanghaepost.service;
 
 import com.sparta.hanghaepost.dto.PostRequestDto;
+import com.sparta.hanghaepost.dto.PostResponseDto;
+import com.sparta.hanghaepost.dto.ResultResponseDto;
 import com.sparta.hanghaepost.entity.Post;
 import com.sparta.hanghaepost.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,19 +19,32 @@ public class Postservice {
     private final PostRepository postRepository;
 
     @Transactional
-    public Post createPost(PostRequestDto requestDto) {
+    public PostResponseDto createPost(PostRequestDto requestDto) {
         Post post = new Post(requestDto);
         postRepository.save(post);
-        return post;
+
+        return new PostResponseDto(post);
     }
 
     @Transactional(readOnly = true)
-    public List<Post> getPost() {
-        return postRepository.findAllByOrderByCreatedAtDesc();
+    public List<PostResponseDto> getPost() {
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        for (Post post : postList) {
+            postResponseDtoList.add(new PostResponseDto(post));
+        }
+
+        return postResponseDtoList;
     }
 
     @Transactional
-    public Post getPostDetail(Long id) {
+    public PostResponseDto getOnePost(Long id) {
+        Post post = getPostDetail(id);
+        return new PostResponseDto(post);
+    }
+
+    public  Post getPostDetail (Long id){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 게시글 입니다.")
         );
@@ -36,25 +52,33 @@ public class Postservice {
     }
 
     @Transactional
-    public Long update(Long id, PostRequestDto postRequestDto) {
+    public PostResponseDto update(Long id, PostRequestDto postRequestDto) {
         Post post = getPostDetail(id);
-        isPassword(id, postRequestDto);
+        if (isNotPassword(id, postRequestDto)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
         post.update(postRequestDto);
-        return post.getId();
+
+        return new PostResponseDto(id, postRequestDto);
     }
 
     @Transactional
-    public Long deleteMemo(Long id, PostRequestDto postRequestDto) {
+    public ResultResponseDto deleteMemo(Long id, PostRequestDto postRequestDto) {
         getPostDetail(id);
-        isPassword(id, postRequestDto);
-        postRepository.deleteById(id);
-        return id;
+
+        ResultResponseDto result;
+        if (isNotPassword(id, postRequestDto)) {
+            result = new ResultResponseDto(false);
+        } else {
+            result = new ResultResponseDto(true);
+            postRepository.deleteById(id);
+        }
+        return result;
     }
 
-    public void isPassword(Long id, PostRequestDto postRequestDto) {
+    public boolean isNotPassword(Long id, PostRequestDto postRequestDto) {
         Optional<Post> optional = postRepository.findByIdAndPassword(id, postRequestDto.getPassword());
-        if (optional.isEmpty()) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+        return optional.isEmpty();
     }
 }
