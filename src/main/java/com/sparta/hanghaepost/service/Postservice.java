@@ -21,9 +21,7 @@ public class Postservice {
     @Transactional
     public PostResponseDto createPost(PostRequestDto requestDto) {
         Post post = new Post(requestDto);
-        postRepository.save(post);
-
-        return new PostResponseDto(post);
+        return new PostResponseDto(postRepository.save(post));
     }
 
     @Transactional(readOnly = true)
@@ -60,14 +58,14 @@ public class Postservice {
 
         post.update(postRequestDto);
 
-        return new PostResponseDto(id, postRequestDto);
+        return new PostResponseDto(id, postRequestDto); // 업데이트 한 값 가져오고 시포서...
     }
 
     @Transactional
     public ResultResponseDto deleteMemo(Long id, PostRequestDto postRequestDto) {
         getPostDetail(id);
 
-        ResultResponseDto result;
+        ResultResponseDto result;   // 삭제 성공했는지 실행한 결과 보고 시포서.....
         if (isNotPassword(id, postRequestDto)) {
             result = new ResultResponseDto(false);
         } else {
